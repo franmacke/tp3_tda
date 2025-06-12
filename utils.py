@@ -1,4 +1,4 @@
-
+from src.grafo import Grafo
 
 def leer_archivo_conexiones(path):
 
@@ -10,4 +10,7 @@ def leer_archivo_conexiones(path):
             linea = linea.strip().split(',')
             conexiones.append((linea[0], linea[1]))
 
-    return conexiones
+    grafo = Grafo()
+    grafo.agregar_conexiones(conexiones)
+
+    return grafo
