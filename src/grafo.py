@@ -1,3 +1,4 @@
+from collections import deque
 
 
 class Grafo:
@@ -25,7 +26,28 @@ class Grafo:
         return self.adyacencias.get(v, [])
 
     def obtener_vertices(self):
-        return self.adyacencias.keys()
+        return list(self.adyacencias.keys())
 
     def __str__(self):
-        return '\n'.join(f'{v}: {self.adyacencias[v]}' for v in sorted(self.adyacencias))
+        return "\n".join(
+            f"{v}: {self.adyacencias[v]}" for v in sorted(self.adyacencias)
+        )
+
+    def distancia(self, origen, destino):
+        if origen == destino:
+            return 0
+
+        visitado = set()
+        cola = deque([(origen, 0)])
+
+        while cola:
+            actual, dist = cola.popleft()
+            if actual == destino:
+                return dist
+            visitado.add(actual)
+            for vecino in self.vecinos(actual):
+                if vecino not in visitado:
+                    cola.append((vecino, dist + 1))
+                    visitado.add(vecino)
+
+        return float("inf")

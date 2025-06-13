@@ -1,8 +1,9 @@
 import sys
 from utils import leer_archivo_conexiones
+from src.backtracking import backtracking
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     args = sys.argv
 
@@ -13,5 +14,4 @@ if __name__ == '__main__':
     grafo = leer_archivo_conexiones(args[1])
     K = int(args[2])
 
-
-
+    print(backtracking(grafo, K))
