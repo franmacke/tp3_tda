@@ -41,8 +41,8 @@ Uso:
 
     python tp3.py <ruta/a/archivo.txt> <K>
 
-**<ruta/a/archivo.txt>**: La ruta al archivo de texto que describe las conexiones del grafo.
-**<K>**: Un número entero que indica la cantidad de clusters a formar.
+**ruta/a/archivo.txt**: La ruta al archivo de texto que describe las conexiones del grafo.
+**K**: Un número entero que indica la cantidad de clusters a formar.
 
 Ejemplo:
 
