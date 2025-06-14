@@ -3,7 +3,7 @@ import os
 
 
 class BaseTestClass(unittest.TestCase):
-    def setup(self):
+    def setUp(self):
         self.data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
         print(f"\nLooking for results file in: {self.data_dir}")
 
