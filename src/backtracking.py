@@ -3,6 +3,7 @@ from src.grafo import Grafo
 
 def backtracking(grafo: Grafo, k_clusters):
     vertices = sorted(grafo.obtener_vertices(), key=lambda v: -len(grafo.vecinos(v)))
+
     if len(vertices) < k_clusters:
         return None
 
@@ -35,6 +36,10 @@ def backtracking(grafo: Grafo, k_clusters):
             return
 
         vertice = vertices[vertice_actual]
+
+        # Poda: si el diámetro actual ya es mayor que el mejor encontrado, no continuar
+        if max(diametros_clusters) >= mejor_solucion['max_diametro']:
+            return
 
         for cluster_index in range(k_clusters):
             # Simetría: no asignar a un cluster si hay uno anterior vacío
