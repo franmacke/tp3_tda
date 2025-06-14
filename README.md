@@ -1,29 +1,62 @@
-# TP3: BT, PL y aproximaciones
+TP3: BT, PL y Aproximaciones
 
-## Setup del proyecto
+Este repositorio contiene la solución para el "Trabajo Práctico 3", que explora el Backtracking (BT), Lenguajes de Programación (PL) y varios algoritmos de aproximación.
+Configuración del Proyecto
 
-1. Clonar el repositorio:
+Sigue estos pasos para configurar el proyecto en tu máquina local:
+1. Crear un Entorno Virtual
 
-   git clone <URL-del-repo>
-   cd <nombre-del-repo>
+Se recomienda usar un entorno virtual para gestionar las dependencias del proyecto. Esto asegura que las librerías que instales no entren en conflicto con otros proyectos de Python en tu sistema.
+Bash
 
-2. Crear un entorno virtual:
+python3 -m venv venv
 
-   python3 -m venv venv
+2. Activar el Entorno Virtual
 
-3. Activar el entorno virtual:
+Antes de instalar las dependencias o ejecutar el proyecto, activa el entorno virtual:
 
-   - En Linux/Mac:
+    En Linux/macOS:
+    Bash
 
-     source .venv/bin/activate
+source .venv/bin/activate
 
-   - En Windows:
+En Windows:
+Bash
 
-     .venv\Scripts\activate
+    .venv\Scripts\activate
 
-4. Instalar dependencias:
+3. Instalar Dependencias
 
-   pip install -r requirements.txt
+Una vez que el entorno virtual esté activo, instala las librerías requeridas usando pip:
+Bash
 
----
+pip install -r requirements.txt
 
+Ejecución del Programa Principal
+
+El script principal tp3.py permite ejecutar el algoritmo de backtracking con un grafo y un número de clusters específicos, o ejecutar las pruebas unitarias.
+Ejecutar Pruebas Unitarias
+
+Para ejecutar todas las pruebas unitarias del proyecto, usa el siguiente comando:
+Bash
+
+python tp3.py test
+
+Ejecutar el Algoritmo de Backtracking
+
+Para ejecutar el algoritmo de backtracking, debes proporcionar la ruta a un archivo que contenga la definición del grafo y un valor K que representa el número de clusters deseado.
+
+Uso:
+Bash
+
+python tp3.py <ruta/a/archivo.txt> <K>
+
+    <ruta/a/archivo.txt>: La ruta al archivo de texto que describe las conexiones del grafo.
+    <K>: Un número entero que indica la cantidad de clusters a formar.
+
+Ejemplo:
+Bash
+
+python tp3.py data/grafo_ejemplo.txt 3
+
+El programa imprimirá la máxima distancia (diámetro) encontrada en la mejor solución de clusters y los clusters resultantes.
