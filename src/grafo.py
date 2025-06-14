@@ -4,10 +4,12 @@ from collections import deque
 class Grafo:
     def __init__(self):
         self.adyacencias = {}
+        self.matriz_distancias = {}
 
     def agregar_conexiones(self, conexiones: list[tuple]):
         for u, v in conexiones:
             self.agregar_arista(u, v)
+        self._calcular_matriz_distancias()
 
     def agregar_vertice(self, v):
         if v not in self.adyacencias:
@@ -33,21 +35,24 @@ class Grafo:
             f"{v}: {self.adyacencias[v]}" for v in sorted(self.adyacencias)
         )
 
-    def distancia(self, origen, destino):
-        if origen == destino:
-            return 0
+    def _calcular_matriz_distancias(self):
+        self.matriz_distancias = {}
+        for origen in self.adyacencias:
+            self.matriz_distancias[origen] = self._bfs_distancias(origen)
 
-        visitado = set()
-        cola = deque([(origen, 0)])
-
+    def _bfs_distancias(self, origen):
+        distancias = {v: float("inf") for v in self.adyacencias}
+        distancias[origen] = 0
+        cola = deque([origen])
         while cola:
-            actual, dist = cola.popleft()
-            if actual == destino:
-                return dist
-            visitado.add(actual)
+            actual = cola.popleft()
             for vecino in self.vecinos(actual):
-                if vecino not in visitado:
-                    cola.append((vecino, dist + 1))
-                    visitado.add(vecino)
+                if distancias[vecino] == float("inf"):
+                    distancias[vecino] = distancias[actual] + 1
+                    cola.append(vecino)
+        return distancias
 
-        return float("inf")
+    def distancia(self, origen, destino):
+        if origen not in self.matriz_distancias:
+            return float("inf")
+        return self.matriz_distancias[origen].get(destino, float("inf"))
