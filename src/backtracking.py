@@ -1,6 +1,7 @@
 from src.grafo import Grafo
+from utils import medir_tiempo
 
-
+@medir_tiempo
 def backtracking(grafo: Grafo, k_clusters):
     vertices = sorted(grafo.obtener_vertices(), key=lambda v: -len(grafo.vecinos(v)))
 
@@ -16,48 +17,54 @@ def backtracking(grafo: Grafo, k_clusters):
         'clusters': None
     }
 
-    def es_solucion_valida():
-        return all(len(cluster) > 0 for cluster in clusters.values())
+    def esta_lleno_los_clusters_anteriores(clusters, cluster_index):
+        if any(len(clusters[i]) == 0 for i in range(cluster_index)):
+            return False
+        return True
+
+    def me_paso(diametros_clusters, mejor_solucion):
+        return max(diametros_clusters) >= mejor_solucion['max_diametro']
+
+    def calcular_nuevo_diametro(vertice, cluster, distancias, diametro_actual, mejor_solucion):
+        nuevo_diametro = diametro_actual
+
+        for v in cluster:
+            d = distancias[vertice][v]
+            if d == float('inf'):
+                break
+            nuevo_diametro = max(nuevo_diametro, d)
+
+            if nuevo_diametro >= mejor_solucion['max_diametro']:
+                break
+
+        return nuevo_diametro
 
     def backtracking_recursivo(vertice_actual):
         if vertice_actual == len(vertices):
-            if not es_solucion_valida():
-                return
 
             max_diametro = max(diametros_clusters)
+
             if max_diametro < mejor_solucion['max_diametro']:
                 mejor_solucion['max_diametro'] = max_diametro
                 mejor_solucion['clusters'] = {k: v.copy() for k, v in clusters.items()}
             return
 
-        # Poda: no hay suficientes vértices restantes para llenar clusters vacíos
-        clusters_vacios = sum(1 for c in clusters.values() if len(c) == 0)
-        if len(vertices) - vertice_actual < clusters_vacios:
-            return
-
         vertice = vertices[vertice_actual]
 
-        # Poda: si el diámetro actual ya es mayor que el mejor encontrado, no continuar
-        if max(diametros_clusters) >= mejor_solucion['max_diametro']:
+        if me_paso(diametros_clusters, mejor_solucion):
             return
 
         for cluster_index in range(k_clusters):
-            # Simetría: no asignar a un cluster si hay uno anterior vacío
-            if any(len(clusters[i]) == 0 for i in range(cluster_index)):
+            if not esta_lleno_los_clusters_anteriores(clusters, cluster_index):
                 continue
 
-            # Poda por distancia: si ya no puede mejorar, no seguimos
-            es_compatible = True
-            nuevo_diametro = diametros_clusters[cluster_index]
-            for v in clusters[cluster_index]:
-                d = distancias[vertice][v]
-                if d == float('inf'):
-                    es_compatible = False
-                    break
-                nuevo_diametro = max(nuevo_diametro, d)
-
-            if not es_compatible or nuevo_diametro >= mejor_solucion['max_diametro']:
-                continue
+            nuevo_diametro = calcular_nuevo_diametro(
+                vertice,
+                clusters[cluster_index],
+                distancias,
+                diametros_clusters[cluster_index],
+                mejor_solucion
+            )
 
             clusters[cluster_index].append(vertice)
             anterior = diametros_clusters[cluster_index]
