@@ -76,26 +76,49 @@ def grafo_inducido(grafo, particion):
                     nuevo_grafo.agregar_arista(i, j)
     return nuevo_grafo, comunidad_a_nodos
 
-def algoritmo_louvain(grafo):
+def algoritmo_louvain_k(grafo: Grafo, k: int):
     particion = {v: v for v in grafo.obtener_vertices()}
     jerarquia = []
 
     while True:
         particion = una_iteracion_louvain(grafo, particion)
+
+        # Agrupo nodos por comunidad
         comunidades = defaultdict(list)
         for nodo, comunidad in particion.items():
             comunidades[comunidad].append(nodo)
+
         jerarquia.append(dict(comunidades))
 
-        if len(set(particion.values())) == len(grafo.obtener_vertices()):
+        num_comunidades = len(set(particion.values()))
+        if num_comunidades <= k:
             break
 
         grafo, comunidad_a_nodos = grafo_inducido(grafo, particion)
-        # Reasigno nodos a nuevas comunidades
+
+        # Reasigno nodos originales a nuevas comunidades
         nueva_particion = {}
         for nuevo_id, nodos in comunidad_a_nodos.items():
             for nodo in nodos:
                 nueva_particion[nodo] = nuevo_id
         particion = nueva_particion
 
-    return jerarquia
+    # Si se pasó y hay menos de K comunidades, se devuelve la última válida con >= K
+    return jerarquia[-1]
+
+#Ejemplo para ver los k clusters
+
+"""
+g = Grafo()
+g.agregar_conexiones([
+    (1, 2), (2, 3), (3, 1),
+    (4, 5), (5, 6), (6, 4),
+    (7, 8), (8, 9), (9, 7),
+    (3, 4), (6, 7)
+])
+
+resultado_k = algoritmo_louvain_k(g, k=2)
+
+for id_com, nodos in resultado_k.items():
+    print(f"  Comunidad {id_com}: {nodos}")
+"""
