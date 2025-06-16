@@ -1,7 +1,6 @@
-
 import pulp
 from pulp import LpAffineExpression as Sumatoria
-from grafo import Grafo
+from src.grafo import Grafo
 from itertools import combinations
 
 
@@ -22,7 +21,7 @@ def k_clustering_por_pl(grafo : Grafo, k):
     # Definir D_i como el máximo entre distancias dentro del cluster i
     for i in range(k):
         for u, v in combinations(nodes, 2):
-            dist = grafo.bfs_distancia_uv(u, v)
+            dist = grafo.distancia(u, v)
             model += D[i] >= dist * (x[u, i] + x[v, i] - 1)
 
     # D_max es el máximo de los D_i
@@ -48,5 +47,8 @@ def k_clustering_por_pl(grafo : Grafo, k):
             if pulp.value(x[v, i]) > 0.5:
                 clusters[i].append(v)
 
-    return [clusters[i] for i in range(k)]
-
+    return {
+        'max_diametro': pulp.value(D_max),
+        'clusters': clusters,
+    }
+    # return [clusters[i] for i in range(k)]
