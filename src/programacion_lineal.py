@@ -2,8 +2,9 @@ import pulp
 from pulp import LpAffineExpression as Sumatoria
 from src.grafo import Grafo
 from itertools import combinations
+from utils import medir_tiempo
 
-
+@medir_tiempo
 def k_clustering_por_pl(grafo : Grafo, k):
     nodes = grafo.obtener_vertices()
     n = len(nodes)
@@ -13,7 +14,7 @@ def k_clustering_por_pl(grafo : Grafo, k):
     x = pulp.LpVariable.dicts("x", ((v, i) for v in nodes for i in range(k)), cat='Binary')
     D = pulp.LpVariable.dicts("D", (i for i in range(k)), lowBound=0, cat='Continuous')
     D_max = pulp.LpVariable("D_max", lowBound=0, cat='Continuous')
-    
+
     # Restricciones
     for v in nodes:
         model += pulp.lpSum(x[v, i] for i in range(k)) == 1
@@ -30,11 +31,11 @@ def k_clustering_por_pl(grafo : Grafo, k):
 
     # Objetivo: minimizar D_max
     model += D_max
-    
+
     # Resolver
-    solver = pulp.PULP_CBC_CMD(msg=True)
+    solver = pulp.PULP_CBC_CMD(msg=False)
     model.solve(solver)
-    
+
     # Procesar resultados
     status = pulp.LpStatus[model.status]
     if status != 'Optimal':
@@ -51,4 +52,3 @@ def k_clustering_por_pl(grafo : Grafo, k):
         'max_diametro': pulp.value(D_max),
         'clusters': clusters,
     }
-    # return [clusters[i] for i in range(k)]
