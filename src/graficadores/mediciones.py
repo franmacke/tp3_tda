@@ -1,6 +1,6 @@
-from generador import Generador
-from programacion_lineal import k_clustering_por_pl
-from backtracking import backtracking
+from src.generador import Generador
+from src.programacion_lineal import k_clustering_por_pl
+from src.backtracking import backtracking
 from visualizacion import graficar_comparacion
 
 
