@@ -20,7 +20,7 @@ def graficar_comparacion(resultados):
     # Agregar información de parámetros para cada caso
     for i, caso in enumerate(resultados):
         info_text = f"n={caso['n']}\nm={caso['m']}\nk={caso['k']}"
-        ax1.text(i, max(tiempos_bt[i] or 0, tiempos_pl[i] or 0) + 0.1,
+        ax1.text(i, max(tiempos_bt[i] or 0, tiempos_pl[i] or 0) - 0.1,
                 info_text, ha='center', va='bottom', fontsize=8)
 
     ax1.set_ylabel('Tiempo (segundos)')

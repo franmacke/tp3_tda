@@ -37,6 +37,7 @@ def k_clustering_por_pl(grafo : Grafo, k):
     model += D_max
 
     # Resolver
+
     solver = pulp.PULP_CBC_CMD(msg=False)
     model.solve(solver)
 
@@ -59,5 +60,4 @@ def k_clustering_por_pl(grafo : Grafo, k):
     return {
         'max_diametro': int(pulp.value(D_max)),
         'clusters': clusters,
-        'tiempo_ejecucion': 0
     }

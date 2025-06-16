@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from src.generador import Generador
 from src.programacion_lineal import k_clustering_por_pl
-from utils import medir_tiempo
 
 def analizar_pl(cantidad_casos=10, n_min=10, n_max=30, m_min=None, m_max=None, k_min=2, k_max=5, seed=None):
     generador = Generador(seed)

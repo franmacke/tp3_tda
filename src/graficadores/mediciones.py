@@ -43,10 +43,36 @@ def realizar_mediciones(cantidad_casos=10, n_min=10, n_max=30, m_min=None, m_max
 
     return resultados
 
+def mostrar_comparacion_texto(resultados):
+    print(f"{'Caso':<4} {'n':<3} {'m':<4} {'k':<3} {'Tiempo BT (s)':<15} {'Tiempo PL (s)':<15} {'Diam. BT':<8} {'Diam. PL':<8} {'Ganador':<10}")
+    for i, caso in enumerate(resultados, 1):
+        n = caso['n']
+        m = caso['m']
+        k = caso['k']
+        tiempo_bt = caso['backtracking']['tiempo']
+        tiempo_pl = caso['programacion_lineal']['tiempo']
+        diam_bt = caso['backtracking']['max_diametro']
+        diam_pl = caso['programacion_lineal']['max_diametro']
+
+        # Decidir ganador
+        if tiempo_bt < tiempo_pl:
+            ganador = 'Backtracking'
+        elif tiempo_pl < tiempo_bt:
+            ganador = 'Program. Lineal'
+        else:
+            # Tiempos iguales, comparar diámetro
+            if diam_bt < diam_pl:
+                ganador = 'Backtracking'
+            elif diam_pl < diam_bt:
+                ganador = 'Program. Lineal'
+            else:
+                ganador = 'Empate'
+
+        print(f"{i:<4} {n:<3} {m:<4} {k:<3} {tiempo_bt:<15.6f} {tiempo_pl:<15.6f} {diam_bt:<8} {diam_pl:<8} {ganador:<10}")
 
 if __name__ == "__main__":
     resultados = realizar_mediciones(
-        cantidad_casos=5,  # Número de casos a probar
+        cantidad_casos=10,  # Número de casos a probar
         n_min=10,          # Mínimo número de vértices
         n_max=20,          # Máximo número de vértices
         k_min=2,           # Mínimo número de clusters
@@ -54,4 +80,5 @@ if __name__ == "__main__":
         seed=42            # Semilla para reproducibilidad
     )
 
-    graficar_comparacion(resultados)
+    mostrar_comparacion_texto(resultados)
+    # graficar_comparacion(resultados)
