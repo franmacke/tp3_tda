@@ -4,6 +4,8 @@ import unittest
 from utils import leer_archivo_conexiones
 from src.backtracking import backtracking
 from src.programacion_lineal import k_clustering_por_pl
+from src.louvain import algoritmo_louvain_k
+
 
 
 if __name__ == "__main__":
@@ -24,7 +26,7 @@ if __name__ == "__main__":
 
     grafo = leer_archivo_conexiones(args[1])
     K = int(args[2])
-
+    
     # Backtracking
     print("================================")
     print("Resultados backtracking:")
@@ -35,7 +37,7 @@ if __name__ == "__main__":
     print("================================")
 
     print("\n\n")
-
+    
     # Programacion Lineal
     print("================================")
     print("Resultados PLE:")
@@ -46,7 +48,21 @@ if __name__ == "__main__":
     print("================================")
 
     print("\n\n")
+    
+    
+    # Louvain
+    print("================================")
+    print("Resultados Louvain:")
+    al = algoritmo_louvain_k(grafo, K)
 
+    print(f"Maxima distancia: {al['max_distancia']}")
+    print(f"Clusters: {al['clusters']}")
+    print("================================")
+
+    print("\n\n")
+    
+    
+    
     # Diferencias de tiempo
     print("================================")
     print(f"Tiempo backtracking: {bt['tiempo_ejecucion']}")
