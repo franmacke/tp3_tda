@@ -3,6 +3,7 @@ import unittest
 
 from utils import leer_archivo_conexiones
 from src.backtracking import backtracking
+from src.programacion_lineal import k_clustering_por_pl
 
 
 if __name__ == "__main__":
@@ -32,4 +33,8 @@ if __name__ == "__main__":
     print(f"Clusters: {mejor_solucion['clusters']}")
     print("================================")
 
+    print("\n\n")
+
     # Programacion Lineal
+    print("================================")
+    print(k_clustering_por_pl(grafo, K))
