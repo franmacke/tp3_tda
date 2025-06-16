@@ -81,4 +81,4 @@ if __name__ == "__main__":
     )
 
     mostrar_comparacion_texto(resultados)
-    # graficar_comparacion(resultados)
+    graficar_comparacion(resultados)
