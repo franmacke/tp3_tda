@@ -1,5 +1,6 @@
 import random
 from src.grafo import Grafo
+from utils import exportar_txt
 
 class Generador:
     def __init__(self, seed=None):
@@ -32,6 +33,16 @@ class Generador:
         return grafo
 
     def generar_casos(self, cantidad, n_min=10, n_max=30, m_min=None, m_max=None, k_min=2, k_max=5):
+        """
+        :param cantidad: Cuantos casos se quieren generar
+        :param n_min: Cantidad de nodos minimo
+        :param n_max: Cantidad de nodos maximo
+        :param m_min: Cantidad de aristas minima
+        :param m_max: Cantidad de aristas maxima
+        :param k_min: Cantidad de clusters minima
+        :param k_max: Cantidad de clusters maxima
+        :return: list[Grafo, int]
+        """
 
         casos = []
         for _ in range(cantidad):
@@ -45,3 +56,11 @@ class Generador:
             grafo = self.generar_grafo(n, m)
             casos.append((grafo, k))
         return casos
+
+
+if __name__ == "__main__":
+    generador = Generador(seed=123)
+    casos = generador.generar_casos(
+        cantidad=4, n_min=250, n_max=250, k_min=6, k_max=15
+    )
+    exportar_txt(casos, 'casos')

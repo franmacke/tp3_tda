@@ -1,3 +1,5 @@
+import os
+
 from src.grafo import Grafo
 import time
 
@@ -29,3 +31,23 @@ def medir_tiempo(func):
 
         return resultado
     return wrapper
+
+
+def exportar_txt(casos, base_path):
+
+    os.makedirs(base_path, exist_ok=True)
+
+    for grafo, k in casos:
+        max_aristas = max(grafo.adyacencias.keys(), key=lambda v: len(grafo.adyacencias[v]))
+
+        path = base_path + f"/{len(grafo.obtener_vertices())}" + f"_{max_aristas}"
+
+        if os.path.exists(path):
+            while os.path.exists(path):
+                path += "1"
+
+        with open(path + ".txt", 'w') as f:
+            f.write(f"# Sarasa\n")
+            for v, adyacentes in grafo.adyacencias.items():
+                for adyacente in adyacentes:
+                    f.write(f"{v},{adyacente}\n")
