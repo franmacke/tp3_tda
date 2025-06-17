@@ -1,7 +1,7 @@
 import os
 from src.backtracking import backtracking
 from utils import leer_archivo_conexiones
-from tests.base_test_case import BaseTestClass
+from tests.base_test_class import BaseTestClass
 
 class TestBacktracking(BaseTestClass):
 

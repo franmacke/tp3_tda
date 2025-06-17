@@ -1,6 +1,5 @@
 from collections import deque
 
-
 class Grafo:
     def __init__(self):
         self.adyacencias = {}
@@ -30,6 +29,21 @@ class Grafo:
     def obtener_vertices(self):
         return list(self.adyacencias.keys())
 
+    def bfs_distancia_uv(grafo, origen, destino):
+        if origen == destino:
+            return 0
+        visitados = set([origen])
+        queue = deque([(origen, 0)])
+        while queue:
+            nodo, dist = queue.popleft()
+            for vecino in grafo.vecinos(nodo):
+                if vecino == destino:
+                    return dist + 1
+                if vecino not in visitados:
+                    visitados.add(vecino)
+                    queue.append((vecino, dist + 1))
+        return float('inf')  
+        
     def __str__(self):
         return "\n".join(
             f"{v}: {self.adyacencias[v]}" for v in sorted(self.adyacencias)

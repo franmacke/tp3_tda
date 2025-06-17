@@ -1,8 +1,8 @@
 from collections import defaultdict
+from src.grafo import Grafo
 import random
-from grafo import Grafo
 
-def calcular_modularidad(grafo, particion):
+def calcular_modularidad(grafo: Grafo, particion):
     m = sum(len(grafo.vecinos(v)) for v in grafo.obtener_vertices()) / 2
     grados = {v: len(grafo.vecinos(v)) for v in grafo.obtener_vertices()}
     comunidades = defaultdict(set)
@@ -17,7 +17,7 @@ def calcular_modularidad(grafo, particion):
                 modularidad += A_uv - (grados[u] * grados[v]) / (2 * m)
     return modularidad / (2 * m)
 
-def una_iteracion_louvain(grafo, particion):
+def una_iteracion_louvain(grafo: Grafo, particion):
     m = sum(len(grafo.vecinos(v)) for v in grafo.obtener_vertices()) / 2
     grados = {v: len(grafo.vecinos(v)) for v in grafo.obtener_vertices()}
     nodos = list(grafo.obtener_vertices())
@@ -30,7 +30,6 @@ def una_iteracion_louvain(grafo, particion):
             comunidad_actual = particion[nodo]
             vecinos = grafo.vecinos(nodo)
 
-            # Conteo de enlaces hacia cada comunidad vecina
             enlaces_por_comunidad = defaultdict(int)
             for vecino in vecinos:
                 comunidad_vecino = particion[vecino]
@@ -39,7 +38,6 @@ def una_iteracion_louvain(grafo, particion):
             mejor_delta = 0
             mejor_comunidad = comunidad_actual
 
-            # Quito nodo de su comunidad temporalmente
             particion[nodo] = -1
             for comunidad, enlaces in enlaces_por_comunidad.items():
                 suma_grados = sum(grados[n] for n in particion if particion[n] == comunidad)
@@ -56,46 +54,101 @@ def una_iteracion_louvain(grafo, particion):
 
     return particion
 
-def grafo_inducido(grafo, particion):
+def grafo_inducido(grafo: Grafo, particion):
     nuevo_grafo = Grafo()
     comunidad_a_nodos = defaultdict(list)
+
     for nodo, comunidad in particion.items():
         comunidad_a_nodos[comunidad].append(nodo)
 
-    lista_comunidades = list(comunidad_a_nodos.values())
-    for i, comunidad_i in enumerate(lista_comunidades):
-        for j, comunidad_j in enumerate(lista_comunidades):
-            if i <= j:
-                # Cuento aristas entre comunidades
-                conexiones = 0
-                for u in comunidad_i:
-                    for v in comunidad_j:
-                        if u != v and v in grafo.vecinos(u):
-                            conexiones += 1
-                if conexiones > 0:
-                    nuevo_grafo.agregar_arista(i, j)
+    comunidad_ids = list(comunidad_a_nodos.keys())
+
+    for i in comunidad_ids:
+        for j in comunidad_ids:
+            if i > j:
+                continue
+            conexiones = 0
+            for u in comunidad_a_nodos[i]:
+                for v in comunidad_a_nodos[j]:
+                    if v in grafo.vecinos(u):
+                        conexiones += 1
+            if conexiones > 0:
+                nuevo_grafo.agregar_arista(i, j)
     return nuevo_grafo, comunidad_a_nodos
 
-def algoritmo_louvain(grafo):
+def diametro_cluster(grafo: Grafo, nodos):
+    max_dist = 0
+    nodos = list(nodos)
+    for i in range(len(nodos)):
+        for j in range(i + 1, len(nodos)):
+            dist = grafo.bfs_distancia_uv(nodos[i], nodos[j])
+            if dist != float('inf') and dist > max_dist:
+                max_dist = dist
+    return max_dist
+
+def max_diametro_clusters(grafo: Grafo, clusters):
+    max_diam = 0
+    for nodos in clusters.values():
+        diam = diametro_cluster(grafo, nodos)
+        if diam > max_diam:
+            max_diam = diam
+    return max_diam
+
+
+
+def algoritmo_louvain_k(grafo: Grafo, k: int):
     particion = {v: v for v in grafo.obtener_vertices()}
     jerarquia = []
+    historial = {v: [v] for v in grafo.obtener_vertices()}
+    particion_anterior = None
 
     while True:
         particion = una_iteracion_louvain(grafo, particion)
+
+        if particion == particion_anterior:
+            print("No hubo cambios en la partición, terminando.")
+            break
+        particion_anterior = particion.copy()
+
         comunidades = defaultdict(list)
         for nodo, comunidad in particion.items():
             comunidades[comunidad].append(nodo)
-        jerarquia.append(dict(comunidades))
 
-        if len(set(particion.values())) == len(grafo.obtener_vertices()):
+        nuevas_comunidades = defaultdict(list)
+        for comunidad, nodos in comunidades.items():
+            for nodo in nodos:
+                nuevas_comunidades[comunidad].extend(historial[nodo])
+
+        jerarquia.append(dict(nuevas_comunidades))
+
+        num_comunidades = len(nuevas_comunidades)
+        print(f"Número de comunidades: {num_comunidades}")
+
+        if num_comunidades <= k:
             break
 
-        grafo, comunidad_a_nodos = grafo_inducido(grafo, particion)
-        # Reasigno nodos a nuevas comunidades
-        nueva_particion = {}
-        for nuevo_id, nodos in comunidad_a_nodos.items():
-            for nodo in nodos:
-                nueva_particion[nodo] = nuevo_id
-        particion = nueva_particion
+        grafo, _ = grafo_inducido(grafo, particion)
+        historial = nuevas_comunidades
+        particion = {v: v for v in grafo.obtener_vertices()}
 
-    return jerarquia
+    resultado_clusters = None
+    for particion_final in reversed(jerarquia):
+        if len(particion_final) == k:
+            resultado_clusters = particion_final
+            break
+    if resultado_clusters is None:
+        for particion_final in reversed(jerarquia):
+            if len(particion_final) < k:
+                resultado_clusters = particion_final
+                break
+    if resultado_clusters is None:
+        resultado_clusters = jerarquia[-1]
+
+    max_distancia = max_diametro_clusters(grafo, resultado_clusters)
+
+    return {
+        "max_distancia": max_distancia,
+        "clusters": resultado_clusters
+    }
+
+
