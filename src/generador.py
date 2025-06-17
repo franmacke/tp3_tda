@@ -63,4 +63,4 @@ if __name__ == "__main__":
     casos = generador.generar_casos(
         cantidad=4, n_min=250, n_max=250, k_min=6, k_max=15
     )
-    exportar_txt(casos, 'casos')
+    exportar_txt(casos, '../casos')

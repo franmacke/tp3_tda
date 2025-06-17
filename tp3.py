@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     grafo = leer_archivo_conexiones(args[1])
     K = int(args[2])
-    """
+
     # Backtracking
     print("================================")
     print("Resultados backtracking:")
@@ -36,8 +36,8 @@ if __name__ == "__main__":
     print(f"Clusters: {bt['clusters']}")
     print("================================")
 
-    print("\n\n")
-    
+    print("\n")
+
     # Programacion Lineal
     print("================================")
     print("Resultados PLE:")
@@ -47,9 +47,8 @@ if __name__ == "__main__":
     print(f"Clusters: {pl['clusters']}")
     print("================================")
 
-    print("\n\n")
-    """
-    
+    print("\n")
+
     # Louvain
     print("================================")
     print("Resultados Louvain:")
@@ -59,14 +58,14 @@ if __name__ == "__main__":
     print(f"Clusters: {al['clusters']}")
     print("================================")
 
-    print("\n\n")
-    
-    
-    """
+    print("\n")
+
     # Diferencias de tiempo
     print("================================")
     print(f"Tiempo backtracking: {bt['tiempo_ejecucion']}")
     print(f"Tiempo PLE: {pl['tiempo_ejecucion']}")
-    print(f"Diferencia: {bt['tiempo_ejecucion'] - pl['tiempo_ejecucion']}")
+    print(f"Tiempo Louvain: {al['tiempo_ejecucion']}")
+
+    print(f"Diferencia BT-AL: {bt['tiempo_ejecucion'] - al['tiempo_ejecucion']}")
+    print(f"Diferencia PL-AL: {pl['tiempo_ejecucion'] - al['tiempo_ejecucion']}")
     print("================================")
-    """

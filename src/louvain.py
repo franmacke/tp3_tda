@@ -2,6 +2,9 @@ from collections import defaultdict
 from src.grafo import Grafo
 import random
 
+from utils import medir_tiempo
+
+
 def calcular_modularidad(grafo: Grafo, particion):
     m = sum(len(grafo.vecinos(v)) for v in grafo.obtener_vertices()) / 2
     grados = {v: len(grafo.vecinos(v)) for v in grafo.obtener_vertices()}
@@ -110,7 +113,7 @@ def obtener_particion_cercana_a_k_no_mayor(jerarquia, k):
                     break
     return mejor_particion
 
-
+@medir_tiempo
 def algoritmo_louvain_k(grafo: Grafo, k: int):
     grafo_original = grafo
     particion = {v: v for v in grafo.obtener_vertices()}
