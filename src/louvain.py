@@ -96,7 +96,23 @@ def max_diametro_clusters(grafo: Grafo, clusters):
 
 
 
+def obtener_particion_cercana_a_k_no_mayor(jerarquia, k):
+    mejor_particion = None
+    mejor_diferencia = float('inf')
+    for particion in reversed(jerarquia):
+        num_clusters = len(particion)
+        if num_clusters <= k:
+            diff = k - num_clusters
+            if diff < mejor_diferencia:
+                mejor_diferencia = diff
+                mejor_particion = particion
+                if diff == 0:
+                    break
+    return mejor_particion
+
+
 def algoritmo_louvain_k(grafo: Grafo, k: int):
+    grafo_original = grafo
     particion = {v: v for v in grafo.obtener_vertices()}
     jerarquia = []
     historial = {v: [v] for v in grafo.obtener_vertices()}
@@ -104,9 +120,7 @@ def algoritmo_louvain_k(grafo: Grafo, k: int):
 
     while True:
         particion = una_iteracion_louvain(grafo, particion)
-
         if particion == particion_anterior:
-            print("No hubo cambios en la partición, terminando.")
             break
         particion_anterior = particion.copy()
 
@@ -122,33 +136,23 @@ def algoritmo_louvain_k(grafo: Grafo, k: int):
         jerarquia.append(dict(nuevas_comunidades))
 
         num_comunidades = len(nuevas_comunidades)
-        print(f"Número de comunidades: {num_comunidades}")
+        print(f"Número de comunidades en iteración: {num_comunidades}")
 
         if num_comunidades <= k:
-            break
-
+            break  
+        
         grafo, _ = grafo_inducido(grafo, particion)
         historial = nuevas_comunidades
         particion = {v: v for v in grafo.obtener_vertices()}
 
-    resultado_clusters = None
-    for particion_final in reversed(jerarquia):
-        if len(particion_final) == k:
-            resultado_clusters = particion_final
-            break
-    if resultado_clusters is None:
-        for particion_final in reversed(jerarquia):
-            if len(particion_final) < k:
-                resultado_clusters = particion_final
-                break
+
+    resultado_clusters = obtener_particion_cercana_a_k_no_mayor(jerarquia, k)
     if resultado_clusters is None:
         resultado_clusters = jerarquia[-1]
 
-    max_distancia = max_diametro_clusters(grafo, resultado_clusters)
+    max_distancia = max_diametro_clusters(grafo_original, resultado_clusters)
 
     return {
         "max_distancia": max_distancia,
         "clusters": resultado_clusters
     }
-
-

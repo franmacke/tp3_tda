@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     grafo = leer_archivo_conexiones(args[1])
     K = int(args[2])
-    
+    """
     # Backtracking
     print("================================")
     print("Resultados backtracking:")
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     print("================================")
 
     print("\n\n")
-    
+    """
     
     # Louvain
     print("================================")
@@ -62,10 +62,11 @@ if __name__ == "__main__":
     print("\n\n")
     
     
-    
+    """
     # Diferencias de tiempo
     print("================================")
     print(f"Tiempo backtracking: {bt['tiempo_ejecucion']}")
     print(f"Tiempo PLE: {pl['tiempo_ejecucion']}")
     print(f"Diferencia: {bt['tiempo_ejecucion'] - pl['tiempo_ejecucion']}")
     print("================================")
+    """
